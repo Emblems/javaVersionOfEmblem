@@ -1,9 +1,8 @@
-class Delete extends Function
+class Delete extends FunctionDefinition
 {
   Delete()
   {
-    name = "delete";
-    representation.c = color(255, 0, 0);
+    super("delete", color(255, 0, 0));
   }
   
   String execute(String input)
@@ -12,12 +11,11 @@ class Delete extends Function
   }
 }
 
-class Reverse extends Function
+class Reverse extends FunctionDefinition
 {
   Reverse()
   {
-    name = "reverse";
-    representation.c = color(100, 200, 100);
+    super("reverse", color(100, 200, 100));
   }
   
   String execute(String input)
@@ -26,12 +24,11 @@ class Reverse extends Function
   }
 }
 
-class Increment extends Function
+class Increment extends FunctionDefinition
 {
   Increment()
   {
-    name = "increment";
-    representation.c = color(200, 200, 100);
+    super("increment", color(200, 200, 100));
   }
   
   String execute(String input)
@@ -40,12 +37,11 @@ class Increment extends Function
   }
 }
 
-class Rotate extends Function
+class Rotate extends FunctionDefinition
 {
   Rotate()
   {
-    name = "rotate";
-    representation.c = color(200, 200, 200);
+    super("rotate", color(200, 200, 200));
   }
   
   String execute(String input)
@@ -54,12 +50,11 @@ class Rotate extends Function
   }
 }
 
-class Copy extends Function
+class Copy extends FunctionDefinition
 {
   Copy()
   {
-    name = "copy";
-    representation.c = color(0, 0, 255);
+    super("copy", color(0, 0, 255));
   }
   
   String execute(String input)

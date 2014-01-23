@@ -1,12 +1,43 @@
+import javax.swing.JOptionPane;
+
+GraphVertex source, sink; // for dragging arrow
+GraphVertex dragging;
+
 void mousePressed()
 {
-  for (int i = 0; i < functions.size(); i++)
+  // mouseEvent variable contains the current event information
+  if (mouseEvent.getClickCount()==2)
+    mousePressedDouble();
+  //else if (mouseEvent.getButton()==MouseEvent.BUTTON3)
+    //mousePressedRight();
+  else
+    mousePressedSingle();
+}
+
+void mousePressedDouble()
+{
+  for (GraphVertex g : currentFunction.graph)
   {
-    Function f = (Function)functions.get(i);
+    if (g.mouseOver() && g instanceof FunctionUse)
+    {
+      currentFunction = ((FunctionUse)g).definition;
+    }
+  }
+}
+
+void mousePressedRight()
+{
+}
+
+void mousePressedSingle()
+{
+  for (int i = 0; i < currentFunction.graph.size(); i++)
+  {
+    GraphVertex f = (GraphVertex)currentFunction.graph.get(i);
 
     if (f.mouseOver())
     {
-      if (!startedMakingArrow)
+      if (!startedMakingArrow)  
       {
         startedMakingArrow = true;
         source = f;
@@ -22,7 +53,7 @@ void mousePressed()
     }
   }
 
-  functions.add(new Function());
+  //functions.add(new Function()); //this is 'click to add undefined function'
   startedMakingArrow = false;
 }
 
@@ -35,27 +66,39 @@ void keyPressed()
   else if (key == 'd')
     debugCurrentFunction();
   else if (key == 'x')
-    for (int i = 0; i < functions.size(); i++)
+    for (int i = 0; i < currentFunction.graph.size(); i++)
     {
-      Function f = functions.get(i); 
-      if (f.representation.mouseOver()) functions.remove(f);
+      GraphVertex f = currentFunction.graph.get(i); 
+      if (f.mouseOver())
+        currentFunction.graph.remove(f);
     }
+  else if (key == 'e')
+  {
+    //We're done with the curret function definition
+    toolbox.add(currentFunction);
+
+    //Let's start making a new function now
+    currentFunction = new FunctionDefinition();
+  }
 }
 
 void mouseDragged()
 {
   if (dragging == null)
-    for (int i = 0; i < functions.size(); i++)
+  {
+    for (int i = 0; i < currentFunction.graph.size(); i++)
     {
-      Function f = (Function)functions.get(i);
+      GraphVertex v = currentFunction.graph.get(i);
 
-      if (f.mouseOver())
-        dragging = f;
+      if (v.mouseOver())
+        dragging = v;
     }
+    toolbox.mouseDragged();
+  }
   else
   {
     PVector move = new PVector(mouseX - pmouseX, mouseY - pmouseY);
-    dragging.representation.loc.add(move);
+    dragging.getLocation().add(move);
     startedMakingArrow = false;
   }
 }

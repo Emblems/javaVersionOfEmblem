@@ -1,18 +1,43 @@
 class GraphVertex
 {
-  ArrayList functionsThatThisPointsTo;
+  ArrayList<GraphVertex> children;
+  PVector location;
   
-  String name, description;
-  
-  Shape representation;
-  
+  Representation representation;
+
   GraphVertex()
   {
-    representation = new Shape();
+    representation = new Circle();
+    
+    children = new ArrayList<GraphVertex>();
   }
-  
+
   boolean mouseOver()
   {
-    return representation.mouseOver();
+    return representation.containsOffset(PVector.sub(getLocation(), mouse()));
+  }
+
+  PVector getLocation()
+  {
+    return location;
+  }
+
+  void setLocation(PVector location)
+  {
+    this.location = location;
+  }
+
+  void show()
+  {
+      
+    pushMatrix();
+    translate(getLocation());
+
+    if (mouseOver())
+      representation.showHover();
+    else
+      representation.show();
+
+    popMatrix();
   }
 }

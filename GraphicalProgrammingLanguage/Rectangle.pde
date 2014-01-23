@@ -1,4 +1,4 @@
-class Rectangle extends Shape
+class Rectangle extends Representation
 {
   PVector dimensions;
   
@@ -9,6 +9,15 @@ class Rectangle extends Shape
   
   void show()
   {
-    rect(loc, dimensions);
+    rect(dimensions);
+  }
+  void showHover()
+  {
+    rect(dimensions);
+  }
+  
+  boolean containsOffset(PVector offset)
+  {
+    return less(PVector.mult(abs(offset), 2), dimensions);
   }
 }

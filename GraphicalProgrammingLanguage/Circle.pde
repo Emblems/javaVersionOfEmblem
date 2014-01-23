@@ -1,22 +1,33 @@
-  class Circle extends Shape
+class Circle extends Representation
 {
+  float radius;
+  
   Circle()
   {
+    radius = 50;
   }
   
   void show()
   {
-    pushMatrix();
-    translate(loc);
-    
     fill(c);
+    
     ellipse(0, 0, radius*2, radius*2);
     
-    popMatrix();
+    super.show();
   }
   
-  boolean mouseOver()
+  void showHover()
   {
-    return mouse().dist(loc) < radius;
+    fill(c);
+    
+    int d = 10;
+    ellipse(0, 0, (radius+d)*2, (radius+d)*2);
+    
+    super.showHover();
+  }
+  
+  boolean containsOffset(PVector offset)
+  {
+    return offset.mag() < radius;
   }
 }
