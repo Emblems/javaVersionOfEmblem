@@ -31,7 +31,7 @@ void setup()
 void draw()
 {
   background(255);
-  
+
   toolbox.show();
 
   currentFunction.show();
@@ -41,6 +41,7 @@ void draw()
   {
     TestString test = (TestString)testStrings.get(i);
     test.show();
+    test.run();
   }
 
   if (startedMakingArrow)
@@ -68,13 +69,8 @@ void makeArrow()
   source.children.add(sink);
 }
 
-void runCurrentFunction()
+void debugCurrentFunction(String input)
 {
-  println("Result: " + currentFunction.execute("ship"));
-}
-
-void debugCurrentFunction()
-{
-  currentFunction.debug();
+  currentFunction.debug(input);
 }
 

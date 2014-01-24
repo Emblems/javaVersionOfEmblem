@@ -13,7 +13,10 @@ class Toolbox
     add(new Reverse());
     add(new Increment());
     add(new Rotate());
-    add(new Copy());    
+    add(new Copy());
+    
+    add(new Input());
+    add(new Output());
   }
 
   void show()
@@ -48,7 +51,10 @@ class Toolbox
         uses.remove(v);
         currentFunction.graph.add(v);
         
-        println("TEST" + v);
+        FunctionUse replacement = new FunctionUse(((FunctionUse)v).definition);
+        replacement.location = copy(v.location);
+        uses.add(replacement);
+        
         return;
       }
     }

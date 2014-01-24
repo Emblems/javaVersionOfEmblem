@@ -5,9 +5,13 @@ class TestString
 
   GraphVertex next;
 
-  TestString(String str, GraphVertex start)
+  TestString(String input, GraphVertex start)
   {
-    this.str = str;
+    this(input, start, null);
+  }
+  TestString(String input, GraphVertex start, FunctionDefinition callback)
+  {
+    this.str = input;
     
     next = start;
     this.location = copy(start.location);
@@ -18,21 +22,31 @@ class TestString
     pushMatrix();
     translate(location);
 
-    text(str, 0, 0);
+    text(str);
 
     popMatrix();
-
+  }
+  
+  void run()
+  {
     if (location.dist(next.location) < 1)
     {
       if (next.children.size() == 0)
       {
         JOptionPane.showMessageDialog(null, str);
         testStrings.remove(this);
+        
+        //if (callback != null)
+          //callback.call(str);
       }
       else
       {
+        println("TEST");
         if (next instanceof FunctionUse)
+        {
           str = ((FunctionUse)next).execute(str);
+          println(str);
+        }
         next = next.children.get(0);
       }
     }

@@ -1,3 +1,0 @@
-class Input extends GraphVertex
-{
-}

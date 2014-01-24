@@ -1,6 +1,6 @@
 import javax.swing.JOptionPane;
 
-GraphVertex source, sink; // for dragging arrow
+GraphVertex source, sink; // for drawing arrow
 GraphVertex dragging;
 
 void mousePressed()
@@ -61,10 +61,8 @@ void keyPressed()
 {
   if (key == ' ')
     restart();
-  else if (key == 'r')
-    runCurrentFunction();
   else if (key == 'd')
-    debugCurrentFunction();
+    debugCurrentFunction(JOptionPane.showInputDialog(null, "What string would you like to test?"));
   else if (key == 'x')
     for (int i = 0; i < currentFunction.graph.size(); i++)
     {

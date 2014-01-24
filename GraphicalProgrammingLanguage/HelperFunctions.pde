@@ -74,3 +74,8 @@ PVector copy(PVector vector)
 {
   return new PVector(vector.x, vector.y);
 }
+
+void text(String str)
+{
+  text(str, 0, 0);
+}

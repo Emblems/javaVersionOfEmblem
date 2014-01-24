@@ -59,6 +59,24 @@ class Copy extends FunctionDefinition
   
   String execute(String input)
   {
+    println(input);
     return super.execute(input.substring(0, 1) + input.substring(0));
+  }
+}
+
+///////////////////////
+class Input extends FunctionDefinition
+{
+  Input()
+  {
+    super("input", color(200, 200, 200));
+  }
+}
+
+class Output extends FunctionDefinition
+{
+  Output()
+  {
+    super("output", color(150, 150, 150));
   }
 }
