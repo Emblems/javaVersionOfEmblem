@@ -1,4 +1,27 @@
-class Delete extends FunctionDefinition
+import java.lang.StringBuilder;
+
+class FunctionDefinitionString extends FunctionDefinition
+{
+  FunctionDefinitionString(String name, color c)
+  {
+    super(name, c);
+  }
+  
+  Object execute(Object input)
+  {
+    if (input instanceof String)
+      return execute((String)input);
+    else
+      return input;
+  }
+  
+  String execute(String input)
+  {
+    return input;
+  }
+}
+
+class Delete extends FunctionDefinitionString
 {
   Delete()
   {
@@ -7,11 +30,11 @@ class Delete extends FunctionDefinition
   
   String execute(String input)
   {
-    return super.execute(input.substring(1));
+    return input.substring(1);
   }
 }
 
-class Reverse extends FunctionDefinition
+class Reverse extends FunctionDefinitionString
 {
   Reverse()
   {
@@ -20,11 +43,11 @@ class Reverse extends FunctionDefinition
   
   String execute(String input)
   {
-    return super.execute(input);//TODO: IMplement this
+    return new StringBuilder(input).reverse().toString();
   }
 }
 
-class Increment extends FunctionDefinition
+class Increment extends FunctionDefinitionString
 {
   Increment()
   {
@@ -33,11 +56,11 @@ class Increment extends FunctionDefinition
   
   String execute(String input)
   {
-    return super.execute(char(int(input.charAt(0)) + 1) + input.substring(1));
+    return char(int(input.charAt(0)) + 1) + input.substring(1);
   }
 }
 
-class Rotate extends FunctionDefinition
+class Rotate extends FunctionDefinitionString
 {
   Rotate()
   {
@@ -46,11 +69,11 @@ class Rotate extends FunctionDefinition
   
   String execute(String input)
   {
-    return super.execute(input.substring(1) + input.substring(0, 1));
+    return input.substring(1) + input.substring(0, 1);
   }
 }
 
-class Copy extends FunctionDefinition
+class Copy extends FunctionDefinitionString
 {
   Copy()
   {
@@ -59,8 +82,7 @@ class Copy extends FunctionDefinition
   
   String execute(String input)
   {
-    println(input);
-    return super.execute(input.substring(0, 1) + input.substring(0));
+    return input.substring(0, 1) + input.substring(0);
   }
 }
 

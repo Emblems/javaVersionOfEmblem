@@ -1,6 +1,6 @@
 FunctionDefinition currentFunction;
 
-ArrayList<TestString> testStrings;
+ArrayList<TestObject> testObjects;
 
 Toolbox toolbox;
 
@@ -14,7 +14,7 @@ void restart()
 
   trashLocation = new PVector(width, height);
 
-  testStrings = new ArrayList<TestString>();
+  testObjects = new ArrayList<TestObject>();
 
   startedMakingArrow = false;
 
@@ -37,9 +37,9 @@ void draw()
   currentFunction.show();
 
   //for (TestString test : testStrings)
-  for (int i = 0; i < testStrings.size(); i++)
+  for (int i = 0; i < testObjects.size(); i++)
   {
-    TestString test = (TestString)testStrings.get(i);
+    TestObject test = (TestObject)testObjects.get(i);
     test.show();
     test.run();
   }
@@ -69,8 +69,7 @@ void makeArrow()
   source.children.add(sink);
 }
 
-void debugCurrentFunction(String input)
+void debugCurrentFunction(Object input)
 {
   currentFunction.debug(input);
 }
-

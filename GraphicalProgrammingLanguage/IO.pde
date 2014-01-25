@@ -62,7 +62,19 @@ void keyPressed()
   if (key == ' ')
     restart();
   else if (key == 'd')
-    debugCurrentFunction(JOptionPane.showInputDialog(null, "What string would you like to test?"));
+  {
+    String input = JOptionPane.showInputDialog(null, "What input would you like to test?");
+    
+    try{
+      float floatInput = Float.valueOf(input);
+      debugCurrentFunction(floatInput);
+    }
+    catch(Exception e)
+    {
+      debugCurrentFunction(input);
+    }
+    
+  }
   else if (key == 'x')
     for (int i = 0; i < currentFunction.graph.size(); i++)
     {
@@ -110,4 +122,3 @@ PVector mouse()
 {
   return new PVector(mouseX, mouseY);
 }
-

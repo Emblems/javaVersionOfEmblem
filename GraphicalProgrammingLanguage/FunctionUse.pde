@@ -18,7 +18,7 @@ class FunctionUse extends GraphVertex
     super.show();
   }
 
-  String execute(String input)
+  Object execute(Object input)
   {
     return definition.execute(input);
   }

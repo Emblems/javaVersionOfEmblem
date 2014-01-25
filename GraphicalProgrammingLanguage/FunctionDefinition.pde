@@ -63,7 +63,7 @@ class FunctionDefinition
     text(representation.name, width/2, 20);
   }
 
-  String execute(String input)
+  Object execute(Object input)
   {
     return input;
     //debug(input);
@@ -77,12 +77,11 @@ class FunctionDefinition
       vertex.children.remove(this);
   }
 
-  void debug(String input)
+  void debug(Object input)
   {
     //for (GraphVertex input : inputs)
     for (GraphVertex v : graph)
       if (v instanceof FunctionUse && ((FunctionUse)v).definition instanceof Input)
-        testStrings.add(new TestString(input, v, this));
+        testObjects.add(new TestObject(input, v, this));
   }
 }
-

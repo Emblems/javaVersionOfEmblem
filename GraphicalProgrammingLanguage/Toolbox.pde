@@ -17,6 +17,10 @@ class Toolbox
     
     add(new Input());
     add(new Output());
+    
+    //Add the math primatives
+    add(new Add1());
+    add(new Subtract1());
   }
 
   void show()
