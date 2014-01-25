@@ -57,7 +57,7 @@ class FunctionDefinition
 
       //If you drag it to the trash can, kill it 
       if (f.getLocation().dist(trashLocation) < 100 && dragging != f)
-        destroy();
+        destroy(f);
     }
 
     text(representation.name, width/2, 20);
@@ -69,12 +69,12 @@ class FunctionDefinition
     //debug(input);
   }
 
-  void destroy()
+  void destroy(GraphVertex doomed)
   {
-    graph.remove(this);
+    graph.remove(doomed);
     
-    for (GraphVertex vertex : graph)
-      vertex.children.remove(this);
+    for (GraphVertex v : graph)
+      v.children.remove(doomed);
   }
 
   void debug(Object input)

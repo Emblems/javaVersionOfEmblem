@@ -80,7 +80,7 @@ void keyPressed()
     {
       GraphVertex f = currentFunction.graph.get(i); 
       if (f.mouseOver())
-        currentFunction.graph.remove(f);
+        f.destroy();
     }
   else if (key == 'e')
   {
