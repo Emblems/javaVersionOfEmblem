@@ -1,8 +1,5 @@
 class FunctionDefinition
 {
-  //This are the inputs and outputs
-  ArrayList<GraphVertex> inputs, outputs;
-
   //These are everything
   ArrayList<GraphVertex> graph;
 
@@ -20,9 +17,6 @@ class FunctionDefinition
     representation.c = c;
 
     graph = new ArrayList<GraphVertex>();
-
-    inputs = new ArrayList<GraphVertex>();
-    outputs = new ArrayList<GraphVertex>();
     /*
     FunctionUse input = new FunctionUse(new Input());
     input.setLocation(new PVector(400, height/2));
@@ -65,8 +59,7 @@ class FunctionDefinition
 
   Object execute(Object input)
   {
-    return input;
-    //debug(input);
+    return run(input);
   }
 
   void destroy(GraphVertex doomed)
@@ -83,5 +76,49 @@ class FunctionDefinition
     for (GraphVertex v : graph)
       if (v instanceof FunctionUse && ((FunctionUse)v).definition instanceof Input)
         testObjects.add(new TestObject(input, v, this));
+  }
+  
+  /**
+  Run this function at maximum possible speed. Parallelization should be used as much as possible.
+  */
+  Object run(Object input)
+  {
+    if (graph.size() == 0)
+      return input;
+      
+    Object data = input;
+    FunctionUse currentVertex = (FunctionUse)getInputs().get(0);
+    while(!(currentVertex.definition instanceof Output))
+    {
+      data = currentVertex.execute(data);
+      currentVertex = (FunctionUse)currentVertex.children.get(0);
+    }
+    
+    return data;
+  }
+  
+  ArrayList<GraphVertex> getGraphVertices()
+  {
+    return graph;
+  }
+  
+  ArrayList<FunctionUse> getFunctionUses()
+  {
+    ArrayList<FunctionUse> functionUses = new ArrayList<FunctionUse>();
+    for (GraphVertex vertex : getGraphVertices())
+      if (vertex instanceof FunctionUse)
+        functionUses.add((FunctionUse)vertex);
+    
+    return functionUses;
+  }
+  
+  ArrayList<FunctionUse> getInputs()
+  {
+    ArrayList<FunctionUse> inputs = new ArrayList<FunctionUse>();
+    for (FunctionUse function : getFunctionUses())
+      if (function.definition instanceof Input)
+        inputs.add(function);
+        
+    return inputs;
   }
 }

@@ -9,9 +9,7 @@ boolean startedMakingArrow;
 PVector trashLocation;
 
 void restart()
-{
-  currentFunction = new FunctionDefinition();
-
+{ 
   trashLocation = new PVector(width, height);
 
   testObjects = new ArrayList<TestObject>();
@@ -19,6 +17,8 @@ void restart()
   startedMakingArrow = false;
 
   toolbox = new Toolbox();
+  
+  startNewFunction();
 }
 
 void setup()

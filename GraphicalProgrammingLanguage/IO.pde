@@ -16,13 +16,17 @@ void mousePressed()
 
 void mousePressedDouble()
 {
-  for (GraphVertex g : currentFunction.graph)
-  {
-    if (g.mouseOver() && g instanceof FunctionUse)
-    {
-      currentFunction = ((FunctionUse)g).definition;
-    }
-  }
+  for (GraphVertex vertex : currentFunction.graph)
+    if (vertex.mouseOver() && vertex instanceof FunctionUse)
+      switchTo(((FunctionUse)vertex).definition);
+      
+  for (GraphVertex vertex : toolbox.getUses())
+    if (vertex.mouseOver() && vertex instanceof FunctionUse)
+      switchTo(((FunctionUse)vertex).definition);
+}
+void switchTo(FunctionDefinition definition)
+{
+  currentFunction = definition;
 }
 
 void mousePressedRight()
@@ -31,10 +35,8 @@ void mousePressedRight()
 
 void mousePressedSingle()
 {
-  for (int i = 0; i < currentFunction.graph.size(); i++)
+  for (GraphVertex f : currentFunction.graph)
   {
-    GraphVertex f = (GraphVertex)currentFunction.graph.get(i);
-
     if (f.mouseOver())
     {
       if (!startedMakingArrow)  
@@ -73,23 +75,22 @@ void keyPressed()
     {
       debugCurrentFunction(input);
     }
-    
   }
   else if (key == 'x')
     for (int i = 0; i < currentFunction.graph.size(); i++)
     {
       GraphVertex f = currentFunction.graph.get(i); 
       if (f.mouseOver())
-        f.destroy();
+        currentFunction.destroy(f);
     }
   else if (key == 'e')
-  {
-    //We're done with the curret function definition
-    toolbox.add(currentFunction);
+    startNewFunction();
+}
 
-    //Let's start making a new function now
+void startNewFunction()
+{
     currentFunction = new FunctionDefinition();
-  }
+    toolbox.add(currentFunction);
 }
 
 void mouseDragged()

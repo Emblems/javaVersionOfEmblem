@@ -19,8 +19,8 @@ class Toolbox
     add(new Output());
     
     //Add the math primatives
-    add(new Add1());
-    add(new Subtract1());
+    //add(new Add1());
+    //add(new Subtract1());
   }
 
   void show()
@@ -62,6 +62,16 @@ class Toolbox
         return;
       }
     }
+  }
+  
+  ArrayList<FunctionUse> getUses()
+  {
+    return uses;
+  }
+  
+  ArrayList<FunctionDefinition> getDefinitions()
+  {
+    return definitions;
   }
 }
 
