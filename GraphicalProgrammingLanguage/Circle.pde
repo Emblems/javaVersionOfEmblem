@@ -11,7 +11,7 @@ class Circle extends Representation
   {
     fill(c);
     
-    ellipse(0, 0, radius*2, radius*2);
+    ellipse(radius*2);
     
     super.show();
   }
@@ -21,7 +21,7 @@ class Circle extends Representation
     fill(c);
     
     int d = 10;
-    ellipse(0, 0, (radius+d)*2, (radius+d)*2);
+    ellipse((radius+d)*2);
     
     super.showHover();
   }

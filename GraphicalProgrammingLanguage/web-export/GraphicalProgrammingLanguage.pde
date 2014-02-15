@@ -1,33 +1,42 @@
+/**
+TODOs
+
+Snap to grid?
+fix arrows
+arrow to input goes behind toolbox, but vertices are still in front of toolbox
+variables
+*/
+
 FunctionDefinition currentFunction;
 
-ArrayList<TestString> testStrings;
+ArrayList<TestObject> testObjects;
 
 Toolbox toolbox;
 
 boolean startedMakingArrow;
 
 PVector trashLocation;
-
-ArrayList<FunctionDefinition> allFunctionDefinitions;
+PVector nameLocation, descriptionLocation;
 
 void restart()
 {
-  currentFunction = new FunctionDefinition();
-
-  allFunctionDefinitions = new ArrayList<FunctionDefinition>();
-
   trashLocation = new PVector(width, height);
+  nameLocation = new PVector(width/2, 25);
+  descriptionLocation = new PVector(width/2, 100);
 
-  testStrings = new ArrayList<TestString>();
+  testObjects = new ArrayList<TestObject>();
 
   startedMakingArrow = false;
 
   toolbox = new Toolbox();
+  
+  startNewFunction();
 }
 
 void setup()
 {
-  size(displayWidth, displayHeight);
+  //size(displayWidth, displayHeight);
+  size(600, 600);
 
   restart();
 }
@@ -35,16 +44,15 @@ void setup()
 void draw()
 {
   background(255);
-  
-  toolbox.show();
 
   currentFunction.show();
 
   //for (TestString test : testStrings)
-  for (int i = 0; i < testStrings.size(); i++)
+  for (int i = 0; i < testObjects.size(); i++)
   {
-    TestString test = (TestString)testStrings.get(i);
+    TestObject test = (TestObject)testObjects.get(i);
     test.show();
+    test.run();
   }
 
   if (startedMakingArrow)
@@ -65,26 +73,29 @@ void draw()
   popMatrix();
 
   ellipse(width, height, 100, 100);
+  
+  
+  toolbox.show();
 }
 
 void makeArrow()
 {
-  println(source);
-  println(source.functionsThatThisPointsTo);
-  source.functionsThatThisPointsTo.add(sink);
+  source.children.add(sink);
 }
 
-void runCurrentFunction()
+void debugCurrentFunction(Object input)
 {
-  println("Result: " + currentFunction.execute("ship"));
+  currentFunction.debug(input);
 }
 
-void debugCurrentFunction()
+void drawGrid()
 {
-  currentFunction.debug();
+  int gridSpacing = 50;
+  for(int x = 0; x < 100; x++)
+    for(int y = 0; y < 100; y++)
+      rect(x * gridSpacing, y * gridSpacing, gridSpacing);
 }
-
-class Circle extends Shape
+class Circle extends Representation
 {
   float radius;
   
@@ -98,6 +109,8 @@ class Circle extends Shape
     fill(c);
     
     ellipse(0, 0, radius*2, radius*2);
+    
+    super.show();
   }
   
   void showHover()
@@ -106,6 +119,8 @@ class Circle extends Shape
     
     int d = 10;
     ellipse(0, 0, (radius+d)*2, (radius+d)*2);
+    
+    super.showHover();
   }
   
   boolean containsOffset(PVector offset)
@@ -113,51 +128,141 @@ class Circle extends Shape
     return offset.mag() < radius;
   }
 }
+class FunctionDefinitionFloat extends FunctionDefinition
+{
+  FunctionDefinitionFloat(String name, color c)
+  {
+    super(name, c);
+  }
+  
+  Object execute(Object input)
+  {
+    if (input instanceof Float)
+      return execute((Float)input);
+    else
+      return input;
+  }
+  
+  float execute(float input)
+  {
+    return input;
+  }
+}
+
+class Add1 extends FunctionDefinitionFloat
+{
+  Add1()
+  {
+    super("add1", color(0,255,0));
+  }
+  
+  float execute(float input)
+  {
+    return input+1;
+  }
+}
+
+class Subtract1 extends FunctionDefinitionFloat
+{
+  Subtract1()
+  {
+    super("subtract1", color(0,0,255));
+  }
+  
+  float execute(float input)
+  {
+    return input-1;
+  }
+}
+
+class Double extends FunctionDefinitionFloat
+{
+  Double()
+  {
+    super("Double", color(0,0,255));
+  }
+  
+  float execute(float input)
+  {
+    return input*2;
+  }
+}
+
+class Halve extends FunctionDefinitionFloat
+{
+  Halve()
+  {
+    super("Halve", color(0,0,255));
+  }
+  
+  float execute(float input)
+  {
+    return input/2;
+  }
+}
+
+class sumDigits extends FunctionDefinitionFloat
+{
+  sumDigits()
+  {
+    super("sumDigits", color(0,0,255));
+  }
+  
+  float execute(float input)
+  {
+    int sum = 0;
+    while (input != 0){
+      sum += input % 10;
+      input = floor(input/10);
+    } 
+    return sum;
+  }
+}
 class FunctionDefinition
 {
-  //This are the inputs and outputs
-  ArrayList<Input> inputs;
-  ArrayList<Output> outputs;
-
   //These are everything
   ArrayList<GraphVertex> graph;
 
-  String name;
-  Shape representation;
+  Representation representation;
 
   FunctionDefinition()
   {
+    this("unnamedFunction", randomColor());
+  }
+
+  FunctionDefinition(String name, color c)
+  {
     representation = new Circle();
+    representation.name = name;
+    representation.c = c;
 
     graph = new ArrayList<GraphVertex>();
-
-    inputs = new ArrayList<Input>();
-    outputs = new ArrayList<Output>();
-
-    Input input = new Input();
+    /*
+    FunctionUse input = new FunctionUse(new Input());
     input.setLocation(new PVector(400, height/2));
     input.representation.c = color(0, 255, 0);
     inputs.add(input);
     graph.add(input);
 
-    Output output = new Output();
+    FunctionUse output = new FunctionUse(new Output());
     output.setLocation(new PVector(width - 300, height/2));
     output.representation.c = color(255, 0, 255);
     outputs.add(output);
     graph.add(output);
+    */
   }
 
   void show()
   {
-    /*
-    for (GraphVertex input : inputs)
-      //Make an arrow from the left hand side of the screen to the input vertex:
-      arrow(0, input.getLocation().y, input.getLocation().x - input.representation.radius, input.getLocation().y);
-
-    for (GraphVertex output : outputs)
-      //Make an arrow from the oudimensionsrtex to the right hand side of the screen:
-      arrow(output.getLocation().x, output.getLocation().y, width, output.getLocation().y);
-    */
+    
+    for (GraphVertex input : getInputs())
+     //Make an arrow from the left hand side of the screen to the input vertex:
+     arrow(0, input.getLocation().y, input.getLocation().x, input.getLocation().y);
+    
+    for (GraphVertex output : getOutputs())
+     //Make an arrow from the oudimensionsrtex to the right hand side of the screen:
+     arrow(output.getLocation().x, output.getLocation().y, width, output.getLocation().y);
+    
     for (int i = 0; i < graph.size(); i++)
     {
       GraphVertex f = (GraphVertex)graph.get(i);
@@ -166,19 +271,85 @@ class FunctionDefinition
 
       //If you drag it to the trash can, kill it 
       if (f.getLocation().dist(trashLocation) < 100 && dragging != f)
-        graph.remove(this);
+        destroy(f);
     }
+
+    text(representation.name, nameLocation);
+    text(representation.description, descriptionLocation);
   }
 
-  String execute(String input)
+  Object execute(Object input)
   {
-    return "NYI";//inputs.get(0).execute(input);
+    return run(input);
   }
 
-  void debug()
+  void destroy(GraphVertex doomed)
   {
-    for (Input input : inputs)
-      testStrings.add(new TestString("test", input.getLocation()));
+    graph.remove(doomed);
+    
+    for (GraphVertex v : graph)
+      v.children.remove(doomed);
+  }
+
+  void debug(Object input)
+  {
+    //for (GraphVertex input : inputs)
+    for (GraphVertex v : graph)
+      if (v instanceof FunctionUse && ((FunctionUse)v).definition instanceof Input)
+        testObjects.add(new TestObject(input, v, this));
+  }
+  
+  /**
+  Run this function at maximum possible speed. Parallelization should be used as much as possible.
+  */
+  Object run(Object input)
+  {
+    if (graph.size() == 0)
+      return input;
+      
+    Object data = input;
+    FunctionUse currentVertex = (FunctionUse)getInputs().get(0);
+    while(!(currentVertex.definition instanceof Output))
+    {
+      data = currentVertex.execute(data);
+      currentVertex = (FunctionUse)currentVertex.children.get(0);
+    }
+    
+    return data;
+  }
+  
+  ArrayList<GraphVertex> getGraphVertices()
+  {
+    return graph;
+  }
+  
+  ArrayList<FunctionUse> getFunctionUses()
+  {
+    ArrayList<FunctionUse> functionUses = new ArrayList<FunctionUse>();
+    for (GraphVertex vertex : getGraphVertices())
+      if (vertex instanceof FunctionUse)
+        functionUses.add((FunctionUse)vertex);
+    
+    return functionUses;
+  }
+  
+  ArrayList<FunctionUse> getInputs()
+  {
+    ArrayList<FunctionUse> inputs = new ArrayList<FunctionUse>();
+    for (FunctionUse function : getFunctionUses())
+      if (function.definition instanceof Input)
+        inputs.add(function);
+        
+    return inputs;
+  }
+  ArrayList<FunctionUse> getOutputs()
+  {
+    ArrayList<FunctionUse> outputs = new ArrayList<FunctionUse>();
+    for (FunctionUse function : getFunctionUses())
+      if (function.definition instanceof Output)
+        outputs.add(function);
+        
+    return outputs;
   }
 }
 class FunctionUse extends GraphVertex
@@ -190,47 +361,34 @@ class FunctionUse extends GraphVertex
     location = new PVector();
     
     this.definition = definition;
-    name = definition.name;
     representation = definition.representation;
   }
 
   void show()
-  {   
-    for (int i = 0; i < functionsThatThisPointsTo.size(); i++)
-    {
-      GraphVertex sink = functionsThatThisPointsTo.get(i);
-
-      arrow(this, sink);
-    }
+  {
+    for (GraphVertex child : children)
+      arrow(this, child);
     
     super.show();
   }
 
-  String execute(String input)
+  Object execute(Object input)
   {
-    String output = definition.execute(input);
-    
-    if (functionsThatThisPointsTo.size() > 0)
-      return ((FunctionUse)functionsThatThisPointsTo.get(0)).execute(output);
-      
-    return output;
+    return definition.execute(input);
   }
 }
 class GraphVertex
 {
-  ArrayList<GraphVertex> functionsThatThisPointsTo;
+  ArrayList<GraphVertex> children;
   PVector location;
   
-  String name;
-  Shape representation;
+  Representation representation;
 
   GraphVertex()
   {
     representation = new Circle();
     
-    name = "undefined";
-    
-    functionsThatThisPointsTo = new ArrayList<GraphVertex>();
+    children = new ArrayList<GraphVertex>();
   }
 
   boolean mouseOver()
@@ -259,10 +417,6 @@ class GraphVertex
     else
       representation.show();
 
-    fill(0);
-    textAlign(CENTER, CENTER);
-    text(name, 0, -2);
-
     popMatrix();
   }
 }
@@ -283,8 +437,8 @@ void arrow(GraphVertex f1, GraphVertex f2)
   PVector directionVector = PVector.sub(f2.getLocation(), f1.getLocation());
   directionVector.normalize();
   
-  PVector start = f1.getLocation();//PVector.add(f1.getLocation(), PVector.mult(directionVector, f1.representation.radius));
-  PVector end = f2.getLocation();//PVector.sub(f2.getLocation(), PVector.mult(directionVector, f2.representation.radius));
+  PVector start = PVector.add(f1.getLocation(), PVector.mult(directionVector, f1.representation.arrowStopRadius));
+  PVector end = PVector.sub(f2.getLocation(), PVector.mult(directionVector, f2.representation.arrowStopRadius));
 
   arrow(start.x, start.y, end.x, end.y);
 }
@@ -322,6 +476,10 @@ void rect(PVector dimensions)
 {
   rect(ORIGIN, dimensions);
 }
+void rect(int x, int y, int widthAndHeight)
+{
+  rect(x, y, widthAndHeight, widthAndHeight);
+}
 
 PVector abs(PVector vector)
 {
@@ -332,15 +490,70 @@ boolean less(PVector vector1, PVector vector2)
 {
   return vector1.x < vector2.x && vector1.y < vector2.y;
 }
-GraphVertex source, sink; // for dragging arrow
+
+color randomColor()
+{
+  return color(random(255), random(255), random(255));
+}
+
+PVector copy(PVector vector)
+{
+  return new PVector(vector.x, vector.y);
+}
+
+void text(String str)
+{
+  text(str, 0, 0);
+}
+void text(String str, PVector location)
+{
+  text(str, location.x, location.y);
+}
+import javax.swing.JOptionPane;
+
+GraphVertex source, sink; // for drawing arrow
 GraphVertex dragging;
 
 void mousePressed()
 {
-  for (int i = 0; i < currentFunction.graph.size(); i++)
-  {
-    GraphVertex f = (GraphVertex)currentFunction.graph.get(i);
+  // mouseEvent variable contains the current event information
+  if (mouseEvent.getClickCount()==2)
+    mousePressedDouble();
+  //else if (mouseEvent.getButton()==MouseEvent.BUTTON3)
+    //mousePressedRight();
+  else
+    mousePressedSingle();
+}
 
+void mousePressedDouble()
+{
+  for (GraphVertex vertex : currentFunction.graph)
+    if (vertex.mouseOver() && vertex instanceof FunctionUse)
+      switchTo(((FunctionUse)vertex).definition);
+      
+  for (GraphVertex vertex : toolbox.getUses())
+    if (vertex.mouseOver() && vertex instanceof FunctionUse)
+      switchTo(((FunctionUse)vertex).definition);
+      
+  //check for double-click on title
+  if (mouse().dist(nameLocation) < 20)
+    currentFunction.representation.name = prompt("What's the new title?");
+  if (mouse().dist(descriptionLocation) < 20)
+    currentFunction.representation.description = prompt("What's the new description?");
+}
+void switchTo(FunctionDefinition definition)
+{
+  currentFunction = definition;
+}
+
+void mousePressedRight()
+{
+}
+
+void mousePressedSingle()
+{
+  for (GraphVertex f : currentFunction.graph)
+  {
     if (f.mouseOver())
     {
       if (!startedMakingArrow)  
@@ -367,25 +580,34 @@ void keyPressed()
 {
   if (key == ' ')
     restart();
-  else if (key == 'r')
-    runCurrentFunction();
   else if (key == 'd')
-    debugCurrentFunction();
+  {
+    String input = JOptionPane.showInputDialog(null, "What input would you like to test?");
+    
+    try{
+      float floatInput = Float.valueOf(input);
+      debugCurrentFunction(floatInput);
+    }
+    catch(Exception e)
+    {
+      debugCurrentFunction(input);
+    }
+  }
   else if (key == 'x')
     for (int i = 0; i < currentFunction.graph.size(); i++)
     {
       GraphVertex f = currentFunction.graph.get(i); 
       if (f.mouseOver())
-        currentFunction.graph.remove(f);
+        currentFunction.destroy(f);
     }
   else if (key == 'e')
-  {
-    //We're done with the curret function definition
-    toolbox.add(currentFunction);
-    
-    //Let's start making a new function now
+    startNewFunction();
+}
+
+void startNewFunction()
+{
     currentFunction = new FunctionDefinition();
-  }
+    toolbox.add(currentFunction);
 }
 
 void mouseDragged()
@@ -418,13 +640,12 @@ PVector mouse()
 {
   return new PVector(mouseX, mouseY);
 }
-class Input extends GraphVertex
+
+String prompt(String msg)
 {
+  return JOptionPane.showInputDialog(null, msg); 
 }
-class Output extends GraphVertex
-{
-}
-class Rectangle extends Shape
+class Rectangle extends Representation
 {
   PVector dimensions;
   
@@ -447,111 +668,203 @@ class Rectangle extends Shape
     return less(PVector.mult(abs(offset), 2), dimensions);
   }
 }
-abstract class Shape
+abstract class Representation
 {
   color c;
-  
-  Shape()
+  String name;
+  String description;
+  int arrowStopRadius;
+
+  Representation()
   {
+    arrowStopRadius = 50;
+    
     c = color(random(255), random(255), random(255));
+    name = "TEST";
+    description = "double click to put a description here";
   }
-  
-  abstract void show();
-  abstract void showHover();
-  
+
+  void show()
+  {
+    fill(0);
+    textAlign(CENTER, CENTER);
+
+    text(name, 0, -2);
+  }
+
+  void showHover()
+  {  
+    fill(0);
+    textAlign(CENTER, CENTER);
+
+    text(name, 0, -2);
+  }
+
   abstract boolean containsOffset(PVector offset);
 }
-class Delete extends FunctionDefinition
+
+import java.lang.StringBuilder;
+
+class FunctionDefinitionString extends FunctionDefinition
+{
+  FunctionDefinitionString(String name, color c)
+  {
+    super(name, c);
+  }
+  
+  Object execute(Object input)
+  {
+    if (input instanceof String)
+      return execute((String)input);
+    else
+      return input;
+  }
+  
+  String execute(String input)
+  {
+    return input;
+  }
+}
+
+class Delete extends FunctionDefinitionString
 {
   Delete()
   {
-    name = "delete";
-    representation.c = color(255, 0, 0);
+    super("delete", color(255, 0, 0));
   }
   
   String execute(String input)
   {
-    return super.execute(input.substring(1));
+    return input.substring(1);
   }
 }
 
-class Reverse extends FunctionDefinition
+class Reverse extends FunctionDefinitionString
 {
   Reverse()
   {
-    name = "reverse";
-    representation.c = color(100, 200, 100);
+    super("reverse", color(100, 200, 100));
   }
   
   String execute(String input)
   {
-    return super.execute(input);//TODO: IMplement this
+    return new StringBuilder(input).reverse().toString();
   }
 }
 
-class Increment extends FunctionDefinition
+class Increment extends FunctionDefinitionString
 {
   Increment()
   {
-    name = "increment";
-    representation.c = color(200, 200, 100);
+    super("increment", color(200, 200, 100));
   }
   
   String execute(String input)
   {
-    return super.execute(char(int(input.charAt(0)) + 1) + input.substring(1));
+    return char(int(input.charAt(0)) + 1) + input.substring(1);
   }
 }
 
-class Rotate extends FunctionDefinition
+class Rotate extends FunctionDefinitionString
 {
   Rotate()
   {
-    name = "rotate";
-    representation.c = color(200, 200, 200);
+    super("rotate", color(200, 200, 200));
   }
   
   String execute(String input)
   {
-    return super.execute(input.substring(1) + input.substring(0, 1));
+    return input.substring(1) + input.substring(0, 1);
   }
 }
 
-class Copy extends FunctionDefinition
+class Copy extends FunctionDefinitionString
 {
   Copy()
   {
-    name = "copy";
-    representation.c = color(0, 0, 255);
+    super("copy", color(0, 0, 255));
   }
   
   String execute(String input)
   {
-    return super.execute(input.substring(0, 1) + input.substring(0));
+    return input.substring(0, 1) + input.substring(0);
   }
 }
-class TestString
+
+///////////////////////
+class Input extends FunctionDefinition
 {
-  String str;
-  PVector loc;
-  
-  TestString(String str, PVector loc)
+  Input()
   {
-    println("TESTSTT");
-    this.str = str;
-    this.loc = loc;
+    super("input", color(200, 200, 200));
   }
-  
+}
+
+class Output extends FunctionDefinition
+{
+  Output()
+  {
+    super("output", color(150, 150, 150));
+  }
+}
+class TestObject
+{
+  Object data;
+  PVector location;
+
+  GraphVertex next;
+
+  TestObject(Object input, GraphVertex start)
+  {
+    this(input, start, null);
+  }
+  TestObject(Object input, GraphVertex start, FunctionDefinition callback)
+  {
+    this.data = input;
+    
+    next = start;
+    this.location = copy(start.location);
+  }
+
   void show()
   {
-    println("TESTSTT");
-    
     pushMatrix();
-    translate(loc);
-    
-    text(str, 0, 0);
-    
+    translate(location);
+
+    if (data instanceof String)
+      text((String)data);
+    else if (data instanceof Float)
+      text("" + (Float)data);
+    else if (data instanceof Integer)
+      text("" + (Integer)data);
+
     popMatrix();
+  }
+  
+  void run()
+  {
+    if (location.dist(next.location) < 1) // If we're close enough to the next vertex
+    {
+      if (next.children.size() == 0)
+      {
+        JOptionPane.showMessageDialog(null, data);
+        testObjects.remove(this);
+        
+        //if (callback != null)
+          //callback.call(str);
+      }
+      else
+      {
+        if (next instanceof FunctionUse)
+          data = ((FunctionUse)next).execute(data);
+          
+        next = next.children.get(0);
+      }
+    }
+    
+    PVector move = PVector.sub(next.location, location);
+    move.mult(.08);
+    location.add(move);
   }
 }
 class Toolbox
@@ -569,7 +882,14 @@ class Toolbox
     add(new Reverse());
     add(new Increment());
     add(new Rotate());
-    add(new Copy());    
+    add(new Copy());
+    
+    add(new Input());
+    add(new Output());
+    
+    //Add the math primatives
+    //add(new Add1());
+    //add(new Subtract1());
   }
 
   void show()
@@ -578,22 +898,17 @@ class Toolbox
     fill(200);
     rect(0, 0, 100, height);
     
-    pushMatrix();
-    
-    translate(50, 0);
     for (FunctionUse use : uses)
-    {
       use.show();
-      translate(0, 120);
-    }
-      
-    popMatrix();
   }
   
   void add(FunctionDefinition definition)
   {
     definitions.add(definition);
-    uses.add(new FunctionUse(definition));
+    
+    FunctionUse use = new FunctionUse(definition);
+    use.setLocation(new PVector(50, 50 + uses.size() * 100));
+    uses.add(use);
   }
   
   void mouseDragged()
@@ -603,14 +918,39 @@ class Toolbox
       GraphVertex v = uses.get(i);
 
       if (v.mouseOver())
+      {
         dragging = v;
         
-      uses.remove(v);
-      currentFunction.graph.add(v);
+        uses.remove(v);
+        currentFunction.graph.add(v);
+        
+        FunctionUse replacement = new FunctionUse(((FunctionUse)v).definition);
+        replacement.location = copy(v.location);
+        uses.add(replacement);
+        
+        return;
+      }
     }
+  }
+  
+  ArrayList<FunctionUse> getUses()
+  {
+    return uses;
+  }
+  
+  ArrayList<FunctionDefinition> getDefinitions()
+  {
+    return definitions;
   }
 }
 
+class Triangle extends Representation
+{
+  boolean containsOffset(PVector offset)
+  {
+    return false;
+  }
+}
 class Variable extends GraphVertex
 {
   Variable()

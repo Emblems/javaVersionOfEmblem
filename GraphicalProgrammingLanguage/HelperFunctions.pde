@@ -15,8 +15,8 @@ void arrow(GraphVertex f1, GraphVertex f2)
   PVector directionVector = PVector.sub(f2.getLocation(), f1.getLocation());
   directionVector.normalize();
   
-  PVector start = f1.getLocation();//PVector.add(f1.getLocation(), PVector.mult(directionVector, f1.representation.radius));
-  PVector end = f2.getLocation();//PVector.sub(f2.getLocation(), PVector.mult(directionVector, f2.representation.radius));
+  PVector start = PVector.add(f1.getLocation(), PVector.mult(directionVector, f1.representation.arrowStopRadius));
+  PVector end = PVector.sub(f2.getLocation(), PVector.mult(directionVector, f2.representation.arrowStopRadius));
 
   arrow(start.x, start.y, end.x, end.y);
 }
@@ -45,6 +45,14 @@ void ellipse(PVector center, PVector dimensions)
 {
   ellipse(center.x, center.y, dimensions.x, dimensions.y);
 }
+void ellipse(PVector center, float widthAndHeight)
+{
+  ellipse(center.x, center.y, widthAndHeight, widthAndHeight);
+}
+void ellipse(float widthAndHeight)
+{
+  ellipse(0, 0, widthAndHeight, widthAndHeight);
+}
 
 void rect(PVector center, PVector dimensions)
 {
@@ -53,6 +61,10 @@ void rect(PVector center, PVector dimensions)
 void rect(PVector dimensions)
 {
   rect(ORIGIN, dimensions);
+}
+void rect(int x, int y, int widthAndHeight)
+{
+  rect(x, y, widthAndHeight, widthAndHeight);
 }
 
 PVector abs(PVector vector)
@@ -78,4 +90,51 @@ PVector copy(PVector vector)
 void text(String str)
 {
   text(str, 0, 0);
+}
+void text(String str, PVector location)
+{
+  text(str, location.x, location.y);
+}
+
+PVector div(PVector vec1, PVector vec2)
+{
+  return new PVector(vec1.x / vec2.x, vec1.y / vec2.y);
+}
+PVector mult(PVector vec1, PVector vec2)
+{
+  return new PVector(vec1.x * vec2.x, vec1.y * vec2.y);
+}
+PVector add(PVector vec1, PVector vec2)
+{
+  return PVector.add(vec1, vec2);
+}
+PVector sub(PVector vec1, PVector vec2)
+{
+  return PVector.sub(vec1, vec2);
+}
+PVector mult(PVector vec, float scalar)
+{
+  return PVector.mult(vec, scalar);
+}
+PVector div(PVector vec, float scalar)
+{
+  return PVector.div(vec, scalar);
+}  
+
+PVector floor(PVector vec)
+{
+  return new PVector(floor(vec.x), floor(vec.y));
+}
+PVector round(PVector vec)
+{
+  return new PVector(round(vec.x), round(vec.y));
+}
+PVector ceil(PVector vec)
+{
+  return new PVector(ceil(vec.x), ceil(vec.y));
+}
+
+PVector roundToNearest(PVector location, PVector spacing)
+{
+  return mult(round(div(location, spacing)), spacing);
 }

@@ -73,6 +73,19 @@ class Rotate extends FunctionDefinitionString
   }
 }
 
+class CopyFirstChar extends FunctionDefinitionString
+{
+  CopyFirstChar()
+  {
+    super("copy first character", color(20, 20, 200));
+  }
+  
+  String execute(String input)
+  {
+    return input.substring(0, 1) + input.substring(0);
+  }
+}
+
 class Copy extends FunctionDefinitionString
 {
   Copy()
@@ -82,7 +95,45 @@ class Copy extends FunctionDefinitionString
   
   String execute(String input)
   {
-    return input.substring(0, 1) + input.substring(0);
+    return input + input;
+  }
+}
+
+class PrependStar extends FunctionDefinitionString
+{
+  PrependStar()
+  {
+    super("Prepend *", color(0, 0, 255));
+  }
+  
+  String execute(String input)
+  {
+    return "*" + input;
+  }
+}
+
+class IfStar extends ConditionDefinitionString
+{
+  IfStar()
+  {
+    super("If *", color(0, 100, 200));
+  }
+  
+  String execute(String input)
+  {
+    return input.chatAt(0) == '*';
+  }
+}
+class IfFirstTwoSame extends ConditionDefinitionString
+{
+  IfFirstTwoSame()
+  {
+    super("If first two same", color(0, 100, 200));
+  }
+  
+  String execute(String input)
+  {
+    return input.chatAt(0) == input.chatAt(1);
   }
 }
 

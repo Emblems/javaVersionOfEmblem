@@ -7,7 +7,7 @@ class FunctionDefinition
 
   FunctionDefinition()
   {
-    this(JOptionPane.showInputDialog(null, "What would you like to call your new function?"), randomColor());
+    this("unnamedFunction", randomColor());
   }
 
   FunctionDefinition(String name, color c)
@@ -34,15 +34,15 @@ class FunctionDefinition
 
   void show()
   {
-    /*
-    for (GraphVertex input : inputs)
+    strokeWeight(3);
+    for (GraphVertex input : getInputs())
      //Make an arrow from the left hand side of the screen to the input vertex:
-     arrow(0, input.getLocation().y, input.getLocation().x - input.representation.radius, input.getLocation().y);
-     
-     for (GraphVertex output : outputs)
+     arrow(0, input.getLocation().y, input.getLocation().x, input.getLocation().y);
+    
+    for (GraphVertex output : getOutputs())
      //Make an arrow from the oudimensionsrtex to the right hand side of the screen:
      arrow(output.getLocation().x, output.getLocation().y, width, output.getLocation().y);
-     */
+    
     for (int i = 0; i < graph.size(); i++)
     {
       GraphVertex f = (GraphVertex)graph.get(i);
@@ -54,7 +54,10 @@ class FunctionDefinition
         destroy(f);
     }
 
-    text(representation.name, width/2, 20);
+    stroke(0);
+    fill(0);
+    text(representation.name, nameLocation);
+    text(representation.description, descriptionLocation);
   }
 
   Object execute(Object input)
@@ -120,5 +123,14 @@ class FunctionDefinition
         inputs.add(function);
         
     return inputs;
+  }
+  ArrayList<FunctionUse> getOutputs()
+  {
+    ArrayList<FunctionUse> outputs = new ArrayList<FunctionUse>();
+    for (FunctionUse function : getFunctionUses())
+      if (function.definition instanceof Output)
+        outputs.add(function);
+        
+    return outputs;
   }
 }

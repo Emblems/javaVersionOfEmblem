@@ -23,6 +23,12 @@ void mousePressedDouble()
   for (GraphVertex vertex : toolbox.getUses())
     if (vertex.mouseOver() && vertex instanceof FunctionUse)
       switchTo(((FunctionUse)vertex).definition);
+      
+  //check for double-click on title
+  if (mouse().dist(nameLocation) < 20)
+    currentFunction.representation.name = prompt("What's the new title?");
+  if (mouse().dist(descriptionLocation) < 20)
+    currentFunction.representation.description = prompt("What's the new description?");
 }
 void switchTo(FunctionDefinition definition)
 {
@@ -61,21 +67,7 @@ void mousePressedSingle()
 
 void keyPressed()
 {
-  if (key == ' ')
-    restart();
-  else if (key == 'd')
-  {
-    String input = JOptionPane.showInputDialog(null, "What input would you like to test?");
-    
-    try{
-      float floatInput = Float.valueOf(input);
-      debugCurrentFunction(floatInput);
-    }
-    catch(Exception e)
-    {
-      debugCurrentFunction(input);
-    }
-  }
+  /*
   else if (key == 'x')
     for (int i = 0; i < currentFunction.graph.size(); i++)
     {
@@ -83,8 +75,7 @@ void keyPressed()
       if (f.mouseOver())
         currentFunction.destroy(f);
     }
-  else if (key == 'e')
-    startNewFunction();
+  */
 }
 
 void startNewFunction()
@@ -116,10 +107,19 @@ void mouseDragged()
 
 void mouseReleased()
 {
-  dragging = null;
+  if (dragging != null)
+  {
+    dragging.drop();
+    dragging = null;
+  }
 }
 
 PVector mouse()
 {
   return new PVector(mouseX, mouseY);
+}
+
+String prompt(String msg)
+{
+  return JOptionPane.showInputDialog(null, msg); 
 }

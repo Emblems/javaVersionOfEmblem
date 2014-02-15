@@ -40,4 +40,10 @@ class GraphVertex
 
     popMatrix();
   }
+  
+  void drop()
+  {
+    if (gridEnabled)
+      setLocation(roundToNearest(getLocation(), gridSpacing));
+  }
 }

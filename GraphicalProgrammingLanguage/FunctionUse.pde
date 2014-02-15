@@ -12,6 +12,8 @@ class FunctionUse extends GraphVertex
 
   void show()
   {
+    strokeWeight(3);
+    stroke(100);
     for (GraphVertex child : children)
       arrow(this, child);
     

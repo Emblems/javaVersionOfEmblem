@@ -14,6 +14,7 @@ class Toolbox
     add(new Increment());
     add(new Rotate());
     add(new Copy());
+    add(new CopyFirstChar());
     
     add(new Input());
     add(new Output());
@@ -26,7 +27,7 @@ class Toolbox
   void show()
   {
     //Draw the toolbox.
-    fill(200);
+    fill(0, 100);
     rect(0, 0, 100, height);
     
     for (FunctionUse use : uses)
